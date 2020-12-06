@@ -324,7 +324,7 @@ class bimap
     }
 
     template <typename Descriptor, typename T, typename Comparator>
-    static node_t * find(node_t * t, T const & x, Comparator const & compare) noexcept
+    static node_t * find(node_t * t, T const & x, Comparator const & compare)
     {
         if (t == nullptr) {
             return nullptr;
@@ -340,7 +340,7 @@ class bimap
     }
 
     template <typename Descriptor, typename Iterator, typename T, typename Comparator>
-    Iterator find_element(node_t *& root, T const & desired, Comparator const & compare) const noexcept
+    Iterator find_element(node_t *& root, T const & desired, Comparator const & compare) const
     {
         node_t * found = find<Descriptor>(root, desired, compare);
         if (found != nullptr) {
@@ -353,8 +353,7 @@ class bimap
     }
 
     template <typename Descriptor, typename T, typename Comparator>
-    static std::pair<node_t *, node_t *>
-    split(node_t * t, T const & x, Comparator const & compare) noexcept
+    static std::pair<node_t *, node_t *> split(node_t * t, T const & x, Comparator const & compare)
     {
         if (t == nullptr) {
             return std::make_pair(nullptr, nullptr);
@@ -375,7 +374,7 @@ class bimap
     }
 
     template <typename Descriptor, typename Comparator>
-    static node_t * merge(node_t * a, node_t * b, Comparator const & compare) noexcept
+    static node_t * merge(node_t * a, node_t * b, Comparator const & compare)
     {
         if (a == nullptr) {
             return b;
@@ -404,8 +403,7 @@ class bimap
     {
         left_root = find<left_descriptor_t>(left_root, left, left_compare);
         right_root = find<right_descriptor_t>(right_root, right, right_compare);
-        if ((left_root == nullptr || !(left_descriptor_t::value(left_root) == left)) &&
-            (right_root == nullptr || !(right_descriptor_t::value(right_root) == right))) {
+        if ((left_root == nullptr || !(left_descriptor_t::value(left_root) == left)) && (right_root == nullptr || !(right_descriptor_t::value(right_root) == right))) {
             node_t * new_node;
             new_node = new node_t(std::move(left), std::move(right));
             insert<left_descriptor_t>(left_root, new_node, left_compare);
@@ -417,7 +415,7 @@ class bimap
     }
 
     template <typename Descriptor, typename Comparator>
-    static node_t * erase(node_t *& root, Comparator const & compare) noexcept
+    static node_t * erase(node_t *& root, Comparator const & compare)
     {
         set_parent<Descriptor>(Descriptor::left(root), nullptr);
         set_parent<Descriptor>(Descriptor::right(root), nullptr);
@@ -428,7 +426,7 @@ class bimap
     }
 
     template <typename FirstDescriptor, typename SecondDescriptor, typename FirstComparator, typename SecondComparator>
-    static void erase_root(node_t *& first_root, node_t *& second_root, FirstComparator const & first_compare, SecondComparator const & second_compare, size_t & elements_count) noexcept
+    static void erase_root(node_t *& first_root, node_t *& second_root, FirstComparator const & first_compare, SecondComparator const & second_compare, size_t & elements_count)
     {
         node_t * excess = erase<FirstDescriptor>(first_root, first_compare);
         erase<SecondDescriptor>(second_root, second_compare);
@@ -437,7 +435,7 @@ class bimap
     }
 
     template <typename FirstDescriptor, typename SecondDescriptor, typename T, typename FirstComparator, typename SecondComparator>
-    static void erase_element(node_t *& first_root, node_t *& second_root, T const & key, FirstComparator const & first_compare, SecondComparator const & second_compare, size_t & elements_count) noexcept
+    static void erase_element(node_t *& first_root, node_t *& second_root, T const & key, FirstComparator const & first_compare, SecondComparator const & second_compare, size_t & elements_count)
     {
         first_root = find<FirstDescriptor>(first_root, key, first_compare);
         second_root = splay<SecondDescriptor>(first_root);
@@ -488,13 +486,13 @@ class bimap
     }
 
     template <typename Descriptor>
-    static node_t * minimum(node_t * node)
+    static node_t * minimum(node_t * node) noexcept
     {
         return splay<Descriptor>(sink_left<Descriptor>(node));
     }
 
     template <typename Descriptor, typename T, typename Comparator>
-    static node_t * lower_bound(node_t *& root, T const & x, Comparator const & compare) noexcept
+    static node_t * lower_bound(node_t *& root, T const & x, Comparator const & compare)
     {
         root = find<Descriptor>(root, x, compare);
         if (root != nullptr) {
@@ -510,7 +508,7 @@ class bimap
     }
 
     template <typename Descriptor, typename T, typename Comparator>
-    static node_t * upper_bound(node_t *& root, T const & x, Comparator const & compare) noexcept
+    static node_t * upper_bound(node_t *& root, T const & x, Comparator const & compare)
     {
         root = find<Descriptor>(root, x, compare);
         if (root != nullptr) {
@@ -536,7 +534,7 @@ class bimap
     }
 
     template <typename FirstDescriptor, typename SecondDescriptor, typename FirstType, typename SecondType, typename FirstComparator, typename SecondComparator, typename InsertFunction>
-    static SecondType const & at_element_or_default(node_t *& first_root, node_t *& second_root, FirstType const & key, FirstComparator const & first_compare, SecondComparator const & second_compare, InsertFunction const & insert_function, size_t & elements_count) noexcept
+    static SecondType const & at_element_or_default(node_t *& first_root, node_t *& second_root, FirstType const & key, FirstComparator const & first_compare, SecondComparator const & second_compare, InsertFunction const & insert_function, size_t & elements_count)
     {
         first_root = find<FirstDescriptor>(first_root, key, first_compare);
         if (first_root != nullptr && FirstDescriptor::value(first_root) == key) {
@@ -557,12 +555,11 @@ class bimap
     size_t elements_count;
 
 public:
-    explicit bimap(LeftComparator left_compare = std::move(LeftComparator()),
-                   RightComparator right_compare = std::move(RightComparator()))
+    explicit bimap(LeftComparator left_compare = LeftComparator(), RightComparator right_compare = RightComparator()) noexcept
         : left_root(nullptr)
         , right_root(nullptr)
-        , left_compare(left_compare)
-        , right_compare(right_compare)
+        , left_compare(std::move(left_compare))
+        , right_compare(std::move(right_compare))
         , elements_count(0)
     {
     }
@@ -580,30 +577,25 @@ public:
             left_root = find<left_descriptor_t>(left_root, left, left_compare);
             right_root = find<right_descriptor_t>(right_root, right, right_compare);
             node_t * new_node;
-            try {
-                new_node = new node_t(std::move(left), std::move(right));
-            }
-            catch (...) {
-                throw;
-            }
+            new_node = new node_t(std::move(left), std::move(right));
             insert<left_descriptor_t>(left_root, new_node, left_compare);
             insert<right_descriptor_t>(right_root, new_node, right_compare);
         }
     }
 
     bimap(bimap && other) noexcept
+        : left_root(other.left_root)
+        , right_root(other.right_root)
+        , left_compare(std::move(other.left_compare))
+        , right_compare(std::move(other.right_compare))
+        , elements_count(other.elements_count)
     {
-        left_root = other.left_root;
         other.left_root = nullptr;
-        left_root = other.left_root;
-        other.left_root = nullptr;
-        left_compare = std::move(other.left_compare);
-        right_compare = std::move(other.right_compare);
-        elements_count = other.elements_count;
+        other.right_root = nullptr;
         other.elements_count = 0;
     }
 
-    bimap & operator=(bimap other)
+    bimap & operator=(bimap other) noexcept
     {
         swap(other);
         return *this;
@@ -662,12 +654,12 @@ public:
         return elements_count;
     }
 
-    left_iterator find_left(Left const & desired) const noexcept
+    left_iterator find_left(Left const & desired) const
     {
         return find_element<left_descriptor_t, left_iterator>(left_root, desired, left_compare);
     }
 
-    right_iterator find_right(Right const & desired) const noexcept
+    right_iterator find_right(Right const & desired) const
     {
         return find_element<right_descriptor_t, right_iterator>(right_root, desired, right_compare);
     }
@@ -692,21 +684,21 @@ public:
         return left_iterator(this, insert_by_values(std::move(left), std::move(right)));
     }
 
-    bool erase_left(Left const & key) noexcept
+    bool erase_left(Left const & key)
     {
         size_t previous_elements_count = elements_count;
         erase_element<left_descriptor_t, right_descriptor_t>(left_root, right_root, key, left_compare, right_compare, elements_count);
         return (elements_count < previous_elements_count);
     }
 
-    bool erase_right(Right const & key) noexcept
+    bool erase_right(Right const & key)
     {
         size_t previous_elements_count = elements_count;
         erase_element<right_descriptor_t, left_descriptor_t>(right_root, left_root, key, right_compare, left_compare, elements_count);
         return (elements_count < previous_elements_count);
     }
 
-    left_iterator erase_left(left_iterator const & it) noexcept
+    left_iterator erase_left(left_iterator const & it)
     {
         left_root = splay<left_descriptor_t>(const_cast<node_t *>(it.node));
         right_root = splay<right_descriptor_t>(const_cast<node_t *>(it.node));
@@ -714,7 +706,7 @@ public:
         return left_iterator(this, left_root);
     }
 
-    right_iterator erase_right(right_iterator const & it) noexcept
+    right_iterator erase_right(right_iterator const & it)
     {
         left_root = splay<left_descriptor_t>(const_cast<node_t *>(it.node));
         right_root = splay<right_descriptor_t>(const_cast<node_t *>(it.node));
@@ -722,7 +714,7 @@ public:
         return right_iterator(this, right_root);
     }
 
-    left_iterator erase_left(left_iterator first, left_iterator const & last) noexcept
+    left_iterator erase_left(left_iterator first, left_iterator const & last)
     {
         while (first != last) {
             erase_left(first++);
@@ -730,7 +722,7 @@ public:
         return last;
     }
 
-    right_iterator erase_right(right_iterator first, right_iterator const & last) noexcept
+    right_iterator erase_right(right_iterator first, right_iterator const & last)
     {
         while (first != last) {
             erase_right(first++);
@@ -738,22 +730,22 @@ public:
         return last;
     }
 
-    left_iterator lower_bound_left(Left const & value) const noexcept
+    left_iterator lower_bound_left(Left const & value) const
     {
         return left_iterator(this, lower_bound<left_descriptor_t>(left_root, value, left_compare));
     }
 
-    left_iterator upper_bound_left(Left const & value) const noexcept
+    left_iterator upper_bound_left(Left const & value) const
     {
         return left_iterator(this, upper_bound<left_descriptor_t>(left_root, value, left_compare));
     }
 
-    right_iterator lower_bound_right(Right const & value) const noexcept
+    right_iterator lower_bound_right(Right const & value) const
     {
         return right_iterator(this, lower_bound<right_descriptor_t>(right_root, value, right_compare));
     }
 
-    right_iterator upper_bound_right(Right const & value) const noexcept
+    right_iterator upper_bound_right(Right const & value) const
     {
         return right_iterator(this, upper_bound<right_descriptor_t>(right_root, value, right_compare));
     }
@@ -784,14 +776,12 @@ public:
         return at_element_or_default<right_descriptor_t, left_descriptor_t, Right, Left>(right_root, left_root, key, right_compare, left_compare, insert_function, elements_count);
     }
 
-    bool operator==(bimap const & other) const noexcept
+    bool operator==(bimap const & other) const
     {
         if (size() != other.size()) {
             return false;
         }
-        for (left_iterator first = begin_left(), second = other.begin_left();
-             first != end_left();
-             first++, second++) {
+        for (left_iterator first = begin_left(), second = other.begin_left(); first != end_left(); first++, second++) {
             if (*first != *second) {
                 return false;
             }
@@ -799,7 +789,7 @@ public:
         return true;
     }
 
-    bool operator!=(bimap const & other) const noexcept
+    bool operator!=(bimap const & other) const
     {
         return !(*this == other);
     }
