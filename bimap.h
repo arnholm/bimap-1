@@ -399,13 +399,14 @@ class bimap
         set_parent<Descriptor>(p.second, root);
     }
 
-    node_t * insert_by_values(Left left, Right right)
+    template <typename L, typename R>
+    node_t * insert_by_values(L left, R right)
     {
         left_root = find<left_descriptor_t>(left_root, left, left_compare);
         right_root = find<right_descriptor_t>(right_root, right, right_compare);
         if ((left_root == nullptr || !(left_descriptor_t::value(left_root) == left)) && (right_root == nullptr || !(right_descriptor_t::value(right_root) == right))) {
             node_t * new_node;
-            new_node = new node_t(std::move(left), std::move(right));
+            new_node = new node_t(std::forward<L>(left), std::forward<R>(right));
             insert<left_descriptor_t>(left_root, new_node, left_compare);
             insert<right_descriptor_t>(right_root, new_node, right_compare);
             ++elements_count;
