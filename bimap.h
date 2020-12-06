@@ -478,7 +478,6 @@ class bimap
         return nullptr;
     }
 
-    // noexcept ( ... )
     void swap(bimap & other) noexcept
     {
         std::swap(left_root, other.left_root);
@@ -526,7 +525,6 @@ class bimap
         return nullptr;
     }
 
-    // contains
     template <typename FirstDescriptor, typename SecondDescriptor, typename FirstType, typename SecondType, typename Comparator>
     static SecondType const & at_element(node_t *& root, FirstType const & key, Comparator const & compare)
     {
